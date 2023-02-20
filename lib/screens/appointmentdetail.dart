@@ -3,15 +3,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-// import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:singleclinic/AllText.dart';
 import 'package:singleclinic/main.dart';
 import 'package:singleclinic/modals/UpcomingAppointmrnts.dart';
 import 'package:singleclinic/screens/ChatScreen.dart';
 import 'package:http/http.dart'as http;
+import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../modals/DocterProfileModel.dart';
 import 'CustomButtonWithIcon.dart';
@@ -58,7 +57,6 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
   }
 
   downloadFile(String url, String filename) async {
-
     FileDownloader.downloadFile(
         url: "${url}",
         name: "${filename}",
@@ -67,87 +65,172 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
           String tempPath = path.toString().replaceAll("Download", "Complete Women's Care");
           final File file = File(tempPath);
           print("path here ${file}");
-          var snackBar = SnackBar(
-            backgroundColor: LIME,
-            content: Text(' Saved in your File '),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          setSnackbar("File Downloaded successfully!", context);
+          // var snackBar = SnackBar(
+          //   backgroundColor: LIME,
+          //   content: Text(' Saved in your File '),
+          // );
+          // ScaffoldMessenger.of(context).showSnackBar(snackBar);
           //This will be the path of the downloaded file
         });
   }
-
-  // Future<String> createFolderInAppDocDir(String folderNames) async {
-  //   Map<Permission, PermissionStatus> statuses = await [
-  //     Permission.accessMediaLocation,
-  //     // Permission.manageExternalStorage,
-  //     Permission.storage,
-  //   ].request();
-  //   // var manage = await Permission.manageExternalStorage.status;
-  //   var media = await Permission.accessMediaLocation.status;
-  //   if(media==PermissionStatus.granted){
-  //
-  //     print(statuses[Permission.location]);
-  //     //Get this App Document Directory
-  //
-  //     // final Directory? _appDocDir = await getTemporaryDirectory();
-  //     // //App Document Directory + folder name
-  //     // final Directory _appDocDirFolder =
-  //     // Directory('${_appDocDir!.path}/$folderName/');
-  //     //
-  //     // if (await _appDocDirFolder.exists()) {
-  //     //   //if folder already exists return path
-  //     //   print("checking directory path ${_appDocDirFolder.path} and ${_appDocDirFolder}");
-  //     //   return _appDocDirFolder.path;
-  //     // } else {
-  //     //   //if folder not exists create folder and then return its path
-  //     //   final Directory _appDocDirNewFolder =
-  //     //   await _appDocDirFolder.create(recursive: true);
-  //     //   print("checking directory path 1111 ${_appDocDirFolder.path} and ${_appDocDirFolder}");
-  //     //   return _appDocDirNewFolder.path;
-  //     // }
-  //     final folderName = folderNames;
-  //     final path= Directory("storage/emulated/0/$folderName");
-  //     final path1 =  await getExternalStorageDirectory();
-  //     print("ssdsds ${path1}");
-  //     print("11111111111 ${path}");
-  //     var status = await Permission.storage.status;
-  //     print("mmmmmmmmmmm ${status} and ${status.isGranted}");
-  //     if (!status.isGranted) {
-  //       print("chacking status ${status.isGranted}");
-  //       await Permission.storage.request();
-  //     }
-  //     print(" path here ${path} and ${await path.exists()}");
-  //     if ((await path.exists())) {
-  //       // final taskId = await FlutterDownloader.enqueue(
-  //       //   url: '${widget.model.user.resume}/report.pdf',
-  //       //   headers: {}, // optional: header send with url (auth token etc)
-  //       //   savedDir: '$path',
-  //       //   showNotification: true, // show download progress in status bar (for Android)
-  //       //   openFileFromNotification: true, // click on notification to open downloaded file (for Android)
-  //       // );
-  //       // print("okokko ${taskId}");
-  //       print("here path is ${path}");
-  //       // var dir = await DownloadsPathProvider.
-  //       print("ooooooooo and $path/$folderNames");
-  //       // await Dio().download(
-  //       //     widget.model.user.resume.toString(),
-  //       //     '$path/$folderNames/',
-  //       //     onReceiveProgress: (received, total) {
-  //       //       print("kkkkkkkk ${received} and $path/$folderNames");
-  //       //       if (total != -1) {
-  //       //        // print((received / total * 100).toStringAsFixed(0) + "%");
-  //       //       }
-  //       //     });
-  //       return path.path;
-  //     } else {
-  //       print("here path is 1 ${path}");
-  //       path.create();
-  //       return path.path;
-  //     }}else{
-  //     print("permission denied");
-  //   }
-  //   return "";
+  // Widget timingSlotsList(int index) {
+  //   print(index);
+  //   return GridView.count(
+  //     crossAxisCount: 3,
+  //     padding: EdgeInsets.all(10),
+  //     shrinkWrap: true,
+  //     crossAxisSpacing: 5,
+  //     mainAxisSpacing: 5,
+  //     childAspectRatio: 1.8,
+  //     physics: ClampingScrollPhysics(),
+  //     children: List.generate(
+  //        widget.upcomingList.time,
+  //             (ind) =>
+  //             timingSlotsCard(ind, makeAppointmentClass!.data[index].slottime)),
+  //   );
   // }
+  // Widget timingSlotsCard(int i, List<Slottime> list) {
+  //   return InkWell(
+  //     onTap: () {
+  //       setState(() {
+  //         print(list[i].id);
+  //         if (list[i].isBook == "1") {
+  //           Toast.show(NO_SLOT_AVAILABLE, duration: 2);
+  //         } else {
+  //           slotId = list[i].id.toString();
+  //           slotName = list[i].name;
+  //           print("previousSelectedTimingSlot : " +
+  //               (previousSelectedTimingSlot > list.length
+  //                   ? 0
+  //                   : previousSelectedTimingSlot)
+  //                   .toString());
+  //           selectedTimingSlot[previousSelectedTimingSlot > list.length
+  //               ? 0
+  //               : previousSelectedTimingSlot] = false;
+  //           selectedTimingSlot[i] = !selectedTimingSlot[i];
+  //           previousSelectedTimingSlot = i;
+  //         }
+  //       });
+  //     },
+  //     borderRadius: BorderRadius.circular(20),
+  //     child: Container(
+  //       height: 90,
+  //       margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+  //       decoration: BoxDecoration(
+  //           color: list[i].isBook == "1"
+  //               ? Colors.grey.withOpacity(0.1)
+  //               : selectedTimingSlot[i]
+  //               ? AMBER
+  //               : WHITE,
+  //           borderRadius: BorderRadius.circular(15)),
+  //       padding: EdgeInsets.all(10),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Image.asset(
+  //             list[i].isBook == "1"
+  //                 ? "assets/makeAppointmentScreenImages/time_unactive.png"
+  //                 : selectedTimingSlot[i]
+  //                 ? "assets/makeAppointmentScreenImages/time_active.png"
+  //                 : "assets/makeAppointmentScreenImages/time_unactive.png",
+  //             height: 15,
+  //             width: 15,
+  //           ),
+  //           SizedBox(
+  //             width: 10,
+  //           ),
+  //           Text(
+  //             list[i].name!,
+  //             style: GoogleFonts.poppins(
+  //               fontWeight: FontWeight.w500,
+  //               color: list[i].isBook == "0"
+  //                   ? selectedTimingSlot[i]
+  //                   ? WHITE
+  //                   : BLACK
+  //                   : Colors.grey.withOpacity(0.5),
+  //               fontSize: 12,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Future<String> createFolderInAppDocDir(String folderNames) async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.accessMediaLocation,
+       // Permission.manageExternalStorage,
+      Permission.storage,
+    ].request();
+    print("this is permission request ===== ${PermissionStatus.granted} and ${Permission.accessMediaLocation.status.isGranted.toString()}");
+    // var manage = await Permission.manageExternalStorage.status;
+    var media = await Permission.accessMediaLocation.status;
+    if(media==PermissionStatus.granted){
+
+      print(statuses[Permission.location]);
+      //Get this App Document Directory
+
+      // final Directory? _appDocDir = await getTemporaryDirectory();
+      // //App Document Directory + folder name
+      // final Directory _appDocDirFolder =
+      // Directory('${_appDocDir!.path}/$folderName/');
+      //
+      // if (await _appDocDirFolder.exists()) {
+      //   //if folder already exists return path
+      //   print("checking directory path ${_appDocDirFolder.path} and ${_appDocDirFolder}");
+      //   return _appDocDirFolder.path;
+      // } else {
+      //   //if folder not exists create folder and then return its path
+      //   final Directory _appDocDirNewFolder =
+      //   await _appDocDirFolder.create(recursive: true);
+      //   print("checking directory path 1111 ${_appDocDirFolder.path} and ${_appDocDirFolder}");
+      //   return _appDocDirNewFolder.path;
+      // }
+      final folderName = folderNames;
+      final path= Directory("storage/emulated/0/$folderName");
+      final path1 =  await getExternalStorageDirectory();
+      print("ssdsds ${path1}");
+      print("11111111111 ${path}");
+      var status = await Permission.storage.status;
+      print("mmmmmmmmmmm ${status} and ${status.isGranted}");
+      if (!status.isGranted) {
+        print("chacking status ${status.isGranted}");
+        await Permission.storage.request();
+      }
+      print(" path here ${path} and ${await path.exists()}");
+      if ((await path.exists())) {
+        // final taskId = await FlutterDownloader.enqueue(
+        //   url: '${widget.model.user.resume}/report.pdf',
+        //   headers: {}, // optional: header send with url (auth token etc)
+        //   savedDir: '$path',
+        //   showNotification: true, // show download progress in status bar (for Android)
+        //   openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+        // );
+        // print("okokko ${taskId}");
+        print("here path is ${path}");
+        // var dir = await DownloadsPathProvider.
+        print("ooooooooo and $path/$folderNames");
+        // await Dio().download(
+        //     widget.model.user.resume.toString(),
+        //     '$path/$folderNames/',
+        //     onReceiveProgress: (received, total) {
+        //       print("kkkkkkkk ${received} and $path/$folderNames");
+        //       if (total != -1) {
+        //        // print((received / total * 100).toStringAsFixed(0) + "%");
+        //       }
+        //     });
+        return path.path;
+      } else {
+        print("here path is 1 ${path}");
+        path.create();
+        return path.path;
+      }}else{
+      print("permission denied");
+    }
+    return "";
+  }
   @override
   Widget build(BuildContext context) {
     return widget.upcomingList == null
@@ -660,40 +743,42 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               textAlign: TextAlign.justify,
             ),
             SizedBox(height: 15,),
-            // Text(
-            //   "Prescription",
-            //   style: TextStyle(fontSize: 18, color: BLACK),
-            //   textAlign: TextAlign.justify,
-            // ),
-            // SizedBox(height: 10,),
-            // InkWell(
-            //   onTap: () {
-            //     _launchURL("${widget.upcomingList.prescription}");
-            //     //downloadPdf();
-            //   },
-            //   child: Container(
-            //     height: 45,
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(10),
-            //       color: LIME
-            //     ),
-            //     width: double.infinity,
-            //     child: Center(
-            //       child: Text("Prescription",
-            //         style: TextStyle(
-            //             color: WHITE,
-            //             fontWeight: FontWeight.w600),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            Align(
-              child: CustomButtonWithIcon(buttonText: "Prescription", buttonIcon: Image.asset('assets/dow.png', color: LIME, scale: 1.4,),onTap: (){
-               // createFolderInAppDocDir('Complete Womens Care');
-                downloadFile("${widget.upcomingList.prescription}", "File");
-              },),
+            Text(
+              "Prescription",
+              style: TextStyle(fontSize: 18, color: BLACK),
+              textAlign: TextAlign.justify,
             ),
+            SizedBox(height: 10,),
+            InkWell(
+              onTap: () {
+                downloadFile("${widget.upcomingList.prescription}", "File");
+                //downloadPdf();
+              },
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: LIME
+                ),
+                width: double.infinity,
+                child: Center(
+                  child: Text("Download Prescription",
+                    style: TextStyle(
+                        color: WHITE,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ),
+
+
+
+            // Align(
+            //   child: CustomButtonWithIcon(buttonText: "Prescription", buttonIcon: Image.asset('assets/dow.png', color: LIME, scale: 1.4,),onTap: (){
+            //     createFolderInAppDocDir('Complete Womens Care');
+            //     downloadFile("${widget.upcomingList.prescription}", "File");
+            //   },),
+            // ),
 
 
             SizedBox(

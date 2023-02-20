@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:singleclinic/AllText.dart';
@@ -8,6 +9,7 @@ import 'package:singleclinic/modals/DepartmentsList.dart';
 import 'package:singleclinic/modals/DoctorsAndServices.dart';
 
 import '../main.dart';
+import 'LoginScreen.dart';
 
 class BookAppointment extends StatefulWidget {
   @override
@@ -29,6 +31,20 @@ class _BookAppointmentState extends State<BookAppointment> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   String _hour, _minute, _time = " ";
+
+  int selectedTile;
+  int pricerazorpayy;
+  StateSetter checkoutState;
+  bool isLoggedIn = false;
+  String name,
+
+      packageId,
+      transactionId,
+
+      time,
+      paymentType,
+      amount = "";
+  bool isActive;
 
   DoctorsAndServices doctorsAndServices;
   bool isLoadingDoctorAndServices = false;
@@ -346,7 +362,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                         ),
                         InkWell(
                           onTap: () {
-                            _selectTime(context);
+                            _selectTime( context);
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,6 +383,21 @@ class _BookAppointmentState extends State<BookAppointment> {
                             ],
                           ),
                         ),
+
+                        // Text(data[index].date.toString().substring(8)+"-"+data[index].date.toString().substring(5,7)+"-"+data[index].date.toString().substring(0,4),
+                        //   style: GoogleFonts.poppins(
+                        //       color: LIGHT_GREY_TEXT,
+                        //       fontSize: 11,
+                        //       fontWeight: FontWeight.w400
+                        //   ),
+                        // ),
+                        // Text(widget.slot,
+                        //   style: GoogleFonts.poppins(
+                        //       color: BLACK,
+                        //       fontSize: 15,
+                        //       fontWeight: FontWeight.w500
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 15,
                         ),
@@ -501,6 +532,73 @@ class _BookAppointmentState extends State<BookAppointment> {
       });
     }
   }
+
+  // button() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: InkWell(
+  //           onTap: () {
+  //             if (selectedTile == null) {
+  //               // errorDialog(PLEASE_SELECT_A_SUBSCRIPTION_PLAN);
+  //               return;
+  //             }
+  //             if (isLoggedIn) {
+  //               setState(() {
+  //                 date = (DateTime.now().day < 10
+  //                     ? "0" + DateTime.now().day.toString()
+  //                     : DateTime.now().day.toString()) +
+  //                     "-" +
+  //                     (DateTime.now().month < 10
+  //                         ? "0" + DateTime.now().month.toString()
+  //                         : DateTime.now().month.toString()) +
+  //                     "-" +
+  //                     DateTime.now().year.toString();
+  //                 _time = (DateTime.now().hour < 12
+  //                     ? (DateTime.now().hour < 10
+  //                     ? "0" + DateTime.now().hour.toString()
+  //                     : DateTime.now().hour.toString())
+  //                     : (DateTime.now().hour - 12 < 10
+  //                     ? "0" + (DateTime.now().hour - 12).toString()
+  //                     : (DateTime.now().hour - 12).toString())) +
+  //                     ":" +
+  //                     (DateTime.now().minute < 10
+  //                         ? "0" + DateTime.now().minute.toString()
+  //                         : DateTime.now().minute.toString()) +
+  //                     " " +
+  //                     (DateTime.now().hour < 12 ? "Am" : "Pm");
+  //                 paymentType = "2";
+  //               });
+  //               //openCheckout();
+  //
+  //
+  //             } else {
+  //               Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => LoginScreen(),
+  //                   ));
+  //             }
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.fromLTRB(15, 5, 15, 15),
+  //             height: 50,
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(25),
+  //               color: LIME,
+  //             ),
+  //             child: Center(
+  //               child: Text(
+  //                 isLoggedIn ? ADD_SUBSCRIPTION : LOGIN_TO_ADD_SUBSCRIPTION,
+  //                 style: TextStyle(color: WHITE,fontWeight: FontWeight.w700, fontSize: 17),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       )
+  //     ],
+  //   );
+  // }
 
   getDepartmentsList() async {
     print('Getting departments');

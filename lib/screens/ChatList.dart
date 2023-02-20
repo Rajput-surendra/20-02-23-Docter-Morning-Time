@@ -1071,7 +1071,7 @@ class _ChatListState extends State<ChatList> {
   // List<ChatListDetails> chatListSearch = [];
   // List<ChatListDetails> chatListDetailsPA = [];
   var ds;
-  String uid;
+  String userId;
   String keyword = "";
   bool isSearchClicked = false;
   FocusNode focusNode = FocusNode();
@@ -1088,9 +1088,8 @@ class _ChatListState extends State<ChatList> {
     //getBlogApi();
     Future.delayed(Duration(seconds: 1),(){
       return  getCatApi();
+
     });
-
-
 
     // SharedPreferences.getInstance().then((value) {
     //   setState(() {
@@ -1149,9 +1148,8 @@ class _ChatListState extends State<ChatList> {
       setState(() {
         CatModelNew = CatData;
         current_index = CatModelNew.data[0].id.toString();
-        getBlogNewApi(CatModelNew.data[0].id.toString());
       });
-
+      getBlogNewApi(CatModelNew.data[0].id.toString());
     }
     else {
       print(response.reasonPhrase);
@@ -1162,18 +1160,29 @@ class _ChatListState extends State<ChatList> {
   List<bool> isPlayed = [
 
   ];
-  getBlogNewApi(id) async {
-    var request = http.Request('GET', Uri.parse('${SERVER_ADDRESS}/api/blogs?category_id=${id}'));
-    http.StreamedResponse response = await request.send();
-    print("this is new request ====>>> '${SERVER_ADDRESS}/api/blogs?category_id=${id}");
+  getBlogNewApi(String id) async {
+   /* SharedPreferences.getInstance().then((value) {
+      userId = value.getInt("id").toString();
+    });*/
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    userId = await pref.getInt("id").toString();
+   // var request = http.Request('GET', Uri.parse('${SERVER_ADDRESS}/api/blogs?category_id=${id}&user_id=${userId}'));
+    Map<String, dynamic> param ={
+      "category_id":id,
+      "user_id":userId,
+    };
+    print("this is a parameter======>${param}");
+    var response =await http.get(Uri.parse("${SERVER_ADDRESS}/api/blogs").replace(queryParameters: param));
+   // http.StreamedResponse response = await request.send();
+    print("mmmmmmmmmmmm ${Uri.parse("https://developmentalphawizz.com/dr-booking/api/blogs").replace(queryParameters: param)}");
     if (response.statusCode == 200) {
-      final result = await response.stream.bytesToString();
+      final result = response.body;
       var ResultData = GetBlogsNewModel.fromJson(jsonDecode(result));
       print("this is a------------------->${ResultData}");
       setState(() {
         blogsdata = ResultData;
       });
-
+      print("blog data here ${blogsdata} and ${blogsdata.data[0].isActive} and ${blogsdata.data[0].isPaid}");
       for(var i=0;i< blogsdata.data.length;i++){
         _vController.add(VideoPlayerController.network(blogsdata.data[i].video.toString())..initialize().then((value){
           setState(() {
@@ -1347,6 +1356,7 @@ class _ChatListState extends State<ChatList> {
                       itemCount: blogsdata.data.length,
                       // scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
+                        print("surendra ============?>${blogsdata.data[index].isPaid}");
                         return Column(
                           children: [
                             Padding(
@@ -1478,14 +1488,34 @@ class _ChatListState extends State<ChatList> {
                                           //           bufferedColor: Colors.blueGrey,
                                           //           playedColor: Colors.blueAccent),
                                           //     )),
-                                          blogsdata.data[index].isPaid == 1 ?  Positioned(
+                                           blogsdata.data[index].isActive == true ?
+                                           Positioned(
+                                               left: 1,right: 1,
+                                               top: 1,
+                                               bottom: 1,
+                                               //alignment: Alignment.center,
+                                               child:  _vController[index].value.isPlaying == true ? InkWell(
+                                                   onTap: (){
+                                                     setState(() {
+                                                       // curentIndex = blogsdata.data[index].id.toString();
+                                                       _vController[index].pause();
+                                                     });
+                                                   },
+                                                   child: Icon(Icons.pause,color: Colors.white,)) : InkWell(
+                                                   onTap: (){
+                                                     setState(() {
+                                                       //   curentIndex = blogsdata.data[index].id.toString();
+                                                       _vController[index].play();
+                                                     });
+                                                   },
+                                                   child: Icon(Icons.play_arrow,color: Colors.white,))):
+                                          Positioned(
                                               left: 1,right: 1,
                                               top: 1,
                                               bottom: 1,
                                               //alignment: Alignment.center,
                                               child:   InkWell(
                                                   onTap: (){
-
                                                     setState(() {
                                                       setSnackbar("Please take subscription", context);
 
@@ -1494,26 +1524,8 @@ class _ChatListState extends State<ChatList> {
                                                     });
                                                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SubscriptionPlansScreen()));
                                                   },
-                                                  child: Icon(Icons.lock,color: Colors.white,)) ) :  Positioned(
-                                              left: 1,right: 1,
-                                              top: 1,
-                                              bottom: 1,
-                                              //alignment: Alignment.center,
-                                              child:  _vController[index].value.isPlaying == true ? InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      // curentIndex = blogsdata.data[index].id.toString();
-                                                      _vController[index].pause();
-                                                    });
-                                                  },
-                                                  child: Icon(Icons.pause,color: Colors.white,)) : InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      //   curentIndex = blogsdata.data[index].id.toString();
-                                                      _vController[index].play();
-                                                    });
-                                                  },
-                                                  child: Icon(Icons.play_arrow,color: Colors.white,))),
+                                                  child: Icon(Icons.lock,color: Colors.white,)) )
+
                                         ],
                                       ),
                                     )

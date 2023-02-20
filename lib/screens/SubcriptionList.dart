@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:singleclinic/modals/SubscriptionListClass.dart';
+import 'package:singleclinic/screens/ChatList.dart';
 import 'package:singleclinic/screens/PlaceHolderScreen.dart';
 
 import '../AllText.dart';
@@ -63,7 +64,7 @@ class _SubcriptionListState extends State<SubcriptionList> {
                   constraints: BoxConstraints(maxWidth: 30, minWidth: 10),
                   padding: EdgeInsets.zero,
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatList()));
                   },
                 ),
                 SizedBox(

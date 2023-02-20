@@ -38,6 +38,7 @@ class Data {
   int status;
   String createdAt;
   String updatedAt;
+  bool isActive;
 
   Data(
       {this.id,
@@ -49,9 +50,11 @@ class Data {
         this.isPaid,
         this.status,
         this.createdAt,
-        this.updatedAt});
+        this.updatedAt,
+        this.isActive});
 
   Data.fromJson(Map<String, dynamic> json) {
+    print(json);
     id = json['id'];
     categoryId = json['category_id'];
     title = json['title'];
@@ -62,6 +65,7 @@ class Data {
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    isActive = json['is_active'];
   }
 
   Map<String, dynamic> toJson() {
@@ -76,6 +80,7 @@ class Data {
     data['status'] = this.status;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['is_active'] = this.isActive;
     return data;
   }
 }

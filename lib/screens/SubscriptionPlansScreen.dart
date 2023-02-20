@@ -56,7 +56,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
     Future.delayed(Duration(seconds: 1),(){
       return fetchPlans();}) ;
-    SharedPreferences.getInstance().then((value) {
+      SharedPreferences.getInstance().then((value) {
       isLoggedIn = value.getBool("isLoggedIn") ?? false;
       userId = value.getInt("id").toString();
       print(userId);
